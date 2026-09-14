@@ -52,7 +52,8 @@ export const request = async (endpoint, options = {}) => {
     return data;
   } catch (error) {
     if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      throw new Error(`Impossible de joindre le serveur API (${API_BASE_URL}). Veuillez vérifier votre connexion ou vous assurer que le serveur est bien démarré.`);
+      console.error(`[Erreur Réseau] Échec de communication vers ${API_BASE_URL}${endpoint} :`, error);
+      throw new Error('Impossible de joindre le serveur. Veuillez vérifier votre connexion internet ou réessayer dans quelques instants.');
     }
     throw error;
   }
