@@ -1,38 +1,39 @@
 /**
  * CONSTANTES DE THÈME & DESIGN SYSTEM (theme.js)
  * 
- * Conforme au Cahier des Charges.
- * Centralise les couleurs, typographies, espacements, bordures et ombres
- * pour l'application Web PWA Tontine Collaborative.
+ * Centralise les couleurs (Fond Jaune Pur & Accents), typographies,
+ * espacements, bordures et ombres pour l'application Web PWA.
  */
 
 export const theme = {
   // 1. PALETTE DE COULEURS
   colors: {
-    // Teintes Primaires (Bleu Nuit Fintech & Confiance)
+    // Teintes Primaires
     primary: '#1E3A8A',
     primaryLight: '#3B82F6',
     primaryDark: '#0F172A',
     primarySubtle: 'rgba(59, 130, 246, 0.12)',
 
-    // Teintes Secondaires (Or & Prospérité)
+    // Teintes Secondaires (Or & Ambre)
     secondary: '#D97706',
     secondaryLight: '#F59E0B',
     secondaryDark: '#B45309',
     secondarySubtle: 'rgba(245, 158, 11, 0.15)',
 
-    // Fonds & Surfaces
-    background: '#0B0F19',
-    backgroundCard: '#111827',
-    backgroundSurface: '#1F2937',
-    backgroundInput: '#1E293B',
-    backgroundOverlay: 'rgba(11, 15, 25, 0.85)',
+    // Fonds & Surfaces (Fond Jaune Pur Vibrant)
+    background: '#FFE600',
+    backgroundPureYellow: '#FFFF00',
+    backgroundCard: '#0F172A',
+    backgroundSurface: '#1E293B',
+    backgroundInput: '#0B1120',
+    backgroundOverlay: 'rgba(15, 23, 42, 0.85)',
 
     // Textes & Typographie
     textPrimary: '#F8FAFC',
     textSecondary: '#94A3B8',
     textMuted: '#64748B',
     textAccent: '#38BDF8',
+    textDark: '#0F172A',
 
     // Statuts & Indicateurs Métier
     statusSuccess: '#10B981',
