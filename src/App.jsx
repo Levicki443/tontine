@@ -1,6 +1,7 @@
 /**
- * POINT D'ENTRÉE & ROUTEUR PRINCIPAL (App.jsx)
- * Orchestration globale de la navigation et des flux de la plateforme Web PWA Tontine Collaborative.
+ * POINT D'ENTRÉE & ROUTEUR PRINCIPAL PWA (App.jsx)
+ * 
+ * Orchestration globale de la navigation, du mode hors-ligne et des flux de l'application.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -10,6 +11,7 @@ import LoginScreen from './screens/LoginScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import CreateTontineScreen from './screens/CreateTontineScreen';
 import PaymentScreen from './screens/PaymentScreen';
+import NetworkStatusBanner from './components/NetworkStatusBanner';
 import { setAuthToken, getAuthToken, apiService } from './services/api';
 
 export default function App() {
@@ -30,8 +32,10 @@ export default function App() {
             setCurrentScreen('dashboard');
           }
         } catch {
-          // Jeton expiré ou invalide
-          setAuthToken(null);
+          // Jeton expiré ou serveur hors-ligne
+          if (!localStorage.getItem('tontine_auth_token')) {
+            setAuthToken(null);
+          }
         }
       }
       setInitializing(false);
@@ -40,13 +44,11 @@ export default function App() {
     checkSession();
   }, []);
 
-  // Succès de connexion ou d'inscription
   const handleAuthSuccess = (user) => {
     setCurrentUser(user);
     setCurrentScreen('dashboard');
   };
 
-  // Déconnexion complète
   const handleLogout = () => {
     setAuthToken(null);
     setCurrentUser(null);
@@ -75,14 +77,15 @@ export default function App() {
 
   return (
     <div className="app-container">
+      {/* Bannière de connectivité et synchronisation PWA */}
+      <NetworkStatusBanner />
+
       {/* 1. Landing Page (Visiteurs) */}
       {currentScreen === 'landing' && (
-        <LandingScreen
-          onNavigate={(screen) => setCurrentScreen(screen)}
-        />
+        <LandingScreen onNavigate={(screen) => setCurrentScreen(screen)} />
       )}
 
-      {/* 2. Écran d'Inscription */}
+      {/* 2. Inscription */}
       {currentScreen === 'register' && (
         <RegisterScreen
           onNavigate={(screen) => setCurrentScreen(screen)}
@@ -90,7 +93,7 @@ export default function App() {
         />
       )}
 
-      {/* 3. Écran de Connexion */}
+      {/* 3. Connexion (avec support 2FA) */}
       {currentScreen === 'login' && (
         <LoginScreen
           onNavigate={(screen) => setCurrentScreen(screen)}
