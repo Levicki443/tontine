@@ -1,7 +1,8 @@
 /**
  * TABLEAU DE BORD PRINCIPAL & TRANSPARENCE FINANCIÈRE (DashboardScreen.jsx)
  * 
- * Interface 100% responsive optimisée pour Smartphones, Tablettes et Desktop.
+ * Interface 100% responsive avec navigation par onglets 4 colonnes,
+ * actions équilibrées et liste des versements optimisée pour mobile.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -16,10 +17,10 @@ import { tontineApiService } from '../services/tontineApi';
 import { useTranslation } from '../constants/i18n';
 
 const TABS = [
-  { id: 'tontines', labelKey: 'my_tontines', icon: Users },
-  { id: 'paiements', labelKey: 'my_payments', icon: Wallet },
-  { id: 'notifications', labelKey: 'notifications', icon: Bell },
-  { id: 'historique', labelKey: 'history', icon: History }
+  { id: 'tontines', label: 'Tontines', icon: Users },
+  { id: 'paiements', label: 'Versements', icon: Wallet },
+  { id: 'notifications', label: 'Notifs', icon: Bell },
+  { id: 'historique', label: 'Historique', icon: History }
 ];
 
 export const DashboardScreen = ({ user, onNavigate, onSelectTontineForPayment, onLogout }) => {
@@ -71,8 +72,8 @@ export const DashboardScreen = ({ user, onNavigate, onSelectTontineForPayment, o
 
   return (
     <div className="page-wrapper page-wrapper-medium">
-      {/* 1. En-tête Utilisateur Responsive */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+      {/* 1. En-tête Utilisateur & Contrôles */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.15rem', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
           <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Bienvenue,</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
@@ -85,22 +86,22 @@ export const DashboardScreen = ({ user, onNavigate, onSelectTontineForPayment, o
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
           <LanguageSelector />
-          <button type="button" onClick={() => setShowSettingsModal(true)} className="btn-outline" style={{ padding: '0.4rem 0.6rem' }} title="Paramètres">
+          <button type="button" onClick={() => setShowSettingsModal(true)} className="btn-outline" style={{ padding: '0.4rem 0.55rem', minHeight: '38px' }} title="Paramètres">
             <Settings size={15} color="var(--color-secondary-light)" />
           </button>
-          <button type="button" onClick={() => setShowSecurityModal(true)} className="btn-outline" style={{ padding: '0.4rem 0.6rem' }} title="Sécurité 2FA">
+          <button type="button" onClick={() => setShowSecurityModal(true)} className="btn-outline" style={{ padding: '0.4rem 0.55rem', minHeight: '38px' }} title="Sécurité 2FA">
             <ShieldCheck size={15} color="var(--color-status-success)" />
           </button>
-          <button type="button" onClick={onLogout} className="btn-outline" style={{ borderColor: 'rgba(239,68,68,0.3)', color: 'var(--color-status-danger)', padding: '0.4rem 0.6rem' }}>
+          <button type="button" onClick={onLogout} className="btn-outline" style={{ borderColor: 'rgba(239,68,68,0.3)', color: 'var(--color-status-danger)', padding: '0.4rem 0.55rem', minHeight: '38px' }}>
             <LogOut size={15} />
           </button>
         </div>
       </div>
 
-      {/* 2. Carte Synthèse Financière */}
-      <div className="glass-card" style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr', padding: '1rem 0.75rem', marginBottom: '1.25rem', alignItems: 'center', textAlign: 'center' }}>
+      {/* 2. Synthèse Financière Globale */}
+      <div className="glass-card" style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr', padding: '1rem 0.75rem', marginBottom: '1.15rem', alignItems: 'center', textAlign: 'center' }}>
         <div>
           <div style={{ fontSize: '0.725rem', color: 'var(--color-text-secondary)' }}>{t('active_tontines')}</div>
           <div style={{ fontSize: '1.4rem', fontWeight: '800' }}>{myTontines.length}</div>
@@ -108,26 +109,47 @@ export const DashboardScreen = ({ user, onNavigate, onSelectTontineForPayment, o
         <div style={{ background: 'var(--color-border-light)', height: '70%' }} />
         <div>
           <div style={{ fontSize: '0.725rem', color: 'var(--color-text-secondary)' }}>{t('total_saved')}</div>
-          <div style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--color-secondary-light)' }}>
+          <div style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--color-secondary-light)' }}>
             {totalCotise.toLocaleString('fr-FR')} FCFA
           </div>
         </div>
       </div>
 
-      {/* 3. Actions Rapides */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.65rem', marginBottom: '1.25rem' }}>
-        <button type="button" onClick={() => onNavigate('create_tontine')} className="btn-primary" style={{ padding: '0.65rem 0.85rem' }}>
+      {/* 3. Actions Rapides Équilibrées */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem', marginBottom: '1.15rem' }}>
+        <button
+          type="button"
+          onClick={() => onNavigate('create_tontine')}
+          className="btn-primary"
+          style={{ minHeight: '48px', padding: '0.65rem 0.5rem', fontSize: '0.85rem', fontWeight: '700', borderRadius: 'var(--radius-lg)' }}
+        >
           <Plus size={16} />
-          <span>{t('create_tontine')}</span>
+          <span>Créer une tontine</span>
         </button>
-        <button type="button" onClick={() => onNavigate('payment')} className="btn-outline" style={{ padding: '0.65rem 0.85rem', color: 'var(--color-text-accent)' }}>
+        <button
+          type="button"
+          onClick={() => onNavigate('payment')}
+          className="btn-outline"
+          style={{ minHeight: '48px', padding: '0.65rem 0.5rem', fontSize: '0.85rem', fontWeight: '700', borderRadius: 'var(--radius-lg)', color: 'var(--color-text-accent)' }}
+        >
           <CreditCard size={16} />
-          <span>{t('pay_contribution')}</span>
+          <span>Cotiser</span>
         </button>
       </div>
 
-      {/* 4. Barre d'Onglets Tactile Défilable */}
-      <div className="tabs-scrollable">
+      {/* 4. Barre d'Onglets Mobile Native 4 Colonnes */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '4px',
+          background: 'var(--color-bg-surface)',
+          padding: '4px',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--color-border-light)',
+          marginBottom: '1.15rem'
+        }}
+      >
         {TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -136,17 +158,36 @@ export const DashboardScreen = ({ user, onNavigate, onSelectTontineForPayment, o
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className="tab-btn"
               style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '3px',
+                padding: '0.55rem 0.2rem',
+                borderRadius: 'var(--radius-md)',
                 background: isActive ? 'var(--color-bg-card)' : 'transparent',
                 color: isActive ? 'var(--color-secondary-light)' : 'var(--color-text-secondary)',
-                fontWeight: isActive ? '700' : '500'
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                position: 'relative'
               }}
             >
-              <Icon size={14} />
-              <span>{t(tab.labelKey)}</span>
+              <Icon size={16} />
+              <span style={{ fontSize: '0.725rem', fontWeight: isActive ? '700' : '500' }}>{tab.label}</span>
               {tab.id === 'notifications' && unreadCount > 0 && (
-                <span style={{ width: '7px', height: '7px', borderRadius: 'var(--radius-full)', background: 'var(--color-status-danger)' }} />
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '5px',
+                    right: 'calc(50% - 12px)',
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: 'var(--radius-full)',
+                    background: 'var(--color-status-danger)'
+                  }}
+                />
               )}
             </button>
           );
@@ -183,7 +224,7 @@ export const DashboardScreen = ({ user, onNavigate, onSelectTontineForPayment, o
                       Participants : {tontine.membres?.length || 1} / {tontine.nombreParticipantsMax}
                     </p>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(95px, 1fr))', gap: '0.4rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.4rem' }}>
                       <button
                         type="button"
                         onClick={() => { if (onSelectTontineForPayment) onSelectTontineForPayment(tontine); onNavigate('payment'); }}
@@ -226,16 +267,29 @@ export const DashboardScreen = ({ user, onNavigate, onSelectTontineForPayment, o
                 </div>
               ) : (
                 payments.map((p) => (
-                  <div key={p._id} className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.5rem', padding: '0.75rem' }}>
-                    <CheckCircle2 size={20} color="var(--color-status-success)" style={{ flexShrink: 0 }} />
+                  <div
+                    key={p._id}
+                    className="glass-card"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '0.75rem',
+                      marginBottom: '0.65rem',
+                      padding: '0.85rem 1rem'
+                    }}
+                  >
+                    <CheckCircle2 size={22} color="var(--color-status-success)" style={{ flexShrink: 0 }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '0.825rem', fontWeight: '800', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.referenceTransaction}</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>
-                        {p.operateurMobile} | Tour #{p.numeroTour || 1}
+                      <div style={{ fontSize: '0.85rem', fontWeight: '800', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {p.referenceTransaction}
+                      </div>
+                      <div style={{ fontSize: '0.725rem', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                        {p.operateurMobile} | Tour #{p.numeroTour || 1} - {new Date(p.createdAt).toLocaleDateString('fr-FR')}
                       </div>
                     </div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--color-status-success)', whiteSpace: 'nowrap' }}>
-                      +{Number(p.montant).toLocaleString('fr-FR')} F
+                    <div style={{ fontSize: '0.9rem', fontWeight: '800', color: 'var(--color-status-success)', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                      +{Number(p.montant).toLocaleString('fr-FR')} FCFA
                     </div>
                   </div>
                 ))
