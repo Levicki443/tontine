@@ -1,8 +1,7 @@
 /**
  * ÉCRAN : CRÉATION DE TONTINE & RÈGLES AVANCÉES (CreateTontineScreen.jsx)
  * 
- * Permet de configurer le cercle, le montant fixe, la fréquence,
- * la méthode de tirage (aléatoire, ancienneté, besoin) et les pénalités de retard.
+ * Interface 100% responsive optimisée pour Smartphones, Tablettes et Ordinateurs.
  */
 
 import React, { useState } from 'react';
@@ -11,7 +10,7 @@ import BoutonRetour from '../components/BoutonRetour';
 import { tontineApiService } from '../services/tontineApi';
 
 const FREQUENCES = [
-  { id: 'hebdomadaire', label: 'Hebdomadaire' },
+  { id: 'hebdomadaire', label: 'Hebdo' },
   { id: 'bimensuelle', label: 'Bimensuelle' },
   { id: 'mensuelle', label: 'Mensuelle' }
 ];
@@ -49,11 +48,11 @@ export const CreateTontineScreen = ({ onNavigate, onTontineCreated }) => {
       return;
     }
     if (montantNum < 500) {
-      setErrorMsg('Le montant de cotisation doit être d\'au moins 500 FCFA.');
+      setErrorMsg('Montant minimum : 500 FCFA.');
       return;
     }
     if (participantsNum < 2 || participantsNum > 100) {
-      setErrorMsg('Le nombre de participants doit être compris entre 2 et 100.');
+      setErrorMsg('Nombre de participants : entre 2 et 100.');
       return;
     }
 
@@ -83,42 +82,25 @@ export const CreateTontineScreen = ({ onNavigate, onTontineCreated }) => {
 
   return (
     <div className="page-wrapper page-wrapper-narrow">
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div style={{ marginBottom: '1.25rem' }}>
         <BoutonRetour onPress={() => onNavigate('dashboard')} label="Retour au tableau de bord" />
       </div>
 
       <div className="glass-card">
-        <div
-          style={{
-            width: '56px',
-            height: '56px',
-            borderRadius: 'var(--radius-full)',
-            background: 'var(--color-secondary-subtle)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1.25rem auto'
-          }}
-        >
-          <PlusCircle size={28} color="var(--color-secondary-light)" />
+        <div style={{ width: '50px', height: '50px', borderRadius: 'var(--radius-full)', background: 'var(--color-secondary-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
+          <PlusCircle size={26} color="var(--color-secondary-light)" />
         </div>
 
-        <h1 style={{ fontSize: '1.4rem', fontWeight: '800', textAlign: 'center', marginBottom: '0.4rem' }}>
+        <h1 style={{ fontSize: '1.3rem', fontWeight: '800', textAlign: 'center', marginBottom: '0.25rem' }}>
           Créer un Cercle d&apos;Épargne
         </h1>
-        <p style={{ textAlign: 'center', fontSize: '0.85rem', marginBottom: '1.5rem', color: 'var(--color-text-secondary)' }}>
-          Définissez les règles du groupe, le tirage et la sécurité collective.
+        <p style={{ textAlign: 'center', fontSize: '0.8rem', marginBottom: '1.25rem', color: 'var(--color-text-secondary)' }}>
+          Configurez votre cercle, les règles de tirage et les pénalités.
         </p>
 
-        {errorMsg && (
-          <div className="banner-error">
-            <AlertCircle size={18} />
-            <span>{errorMsg}</span>
-          </div>
-        )}
+        {errorMsg && <div className="banner-error"><AlertCircle size={16} /><span>{errorMsg}</span></div>}
 
         <form onSubmit={handleCreate}>
-          {/* Titre & Description */}
           <div className="form-group">
             <label className="form-label">Titre du groupe</label>
             <div className="input-field-wrapper">
@@ -127,14 +109,13 @@ export const CreateTontineScreen = ({ onNavigate, onTontineCreated }) => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Description / Objectif</label>
+            <label className="form-label">Description (optionnelle)</label>
             <div className="input-field-wrapper">
-              <input type="text" className="input-field" placeholder="Ex : Épargne solidaire pour investissements" value={description} onChange={(e) => setDescription(e.target.value)} />
+              <input type="text" className="input-field" placeholder="Ex : Épargne solidaire" value={description} onChange={(e) => setDescription(e.target.value)} />
             </div>
           </div>
 
-          {/* Montant & Participants */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.65rem' }}>
             <div className="form-group">
               <label className="form-label">Cotisation (FCFA)</label>
               <div className="input-field-wrapper">
@@ -150,23 +131,22 @@ export const CreateTontineScreen = ({ onNavigate, onTontineCreated }) => {
             </div>
           </div>
 
-          {/* Fréquence */}
           <div className="form-group">
             <label className="form-label">Fréquence des versements</label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.4rem' }}>
               {FREQUENCES.map((freq) => (
                 <button
                   key={freq.id}
                   type="button"
                   onClick={() => setFrequence(freq.id)}
                   style={{
-                    padding: '0.6rem 0.25rem',
+                    padding: '0.55rem 0.2rem',
                     borderRadius: 'var(--radius-md)',
                     background: frequence === freq.id ? 'var(--color-primary-subtle)' : 'var(--color-bg-input)',
                     border: `1px solid ${frequence === freq.id ? 'var(--color-primary-light)' : 'var(--color-border-light)'}`,
                     color: frequence === freq.id ? 'var(--color-text-accent)' : 'var(--color-text-secondary)',
                     fontWeight: frequence === freq.id ? '700' : '500',
-                    fontSize: '0.8rem',
+                    fontSize: '0.75rem',
                     cursor: 'pointer'
                   }}
                 >
@@ -176,16 +156,15 @@ export const CreateTontineScreen = ({ onNavigate, onTontineCreated }) => {
             </div>
           </div>
 
-          {/* Méthode de tirage */}
           <div className="form-group">
             <label className="form-label">Ordre de tirage des bénéficiaires</label>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
               {METHODES_TIRAGE.map((m) => (
                 <div
                   key={m.id}
                   onClick={() => setMethodeTirage(m.id)}
                   style={{
-                    padding: '0.65rem 0.85rem',
+                    padding: '0.55rem 0.75rem',
                     borderRadius: 'var(--radius-md)',
                     background: methodeTirage === m.id ? 'var(--color-secondary-subtle)' : 'var(--color-bg-surface)',
                     border: `1px solid ${methodeTirage === m.id ? 'var(--color-secondary-light)' : 'var(--color-border-light)'}`,
@@ -196,51 +175,49 @@ export const CreateTontineScreen = ({ onNavigate, onTontineCreated }) => {
                   }}
                 >
                   <div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: '700', color: methodeTirage === m.id ? 'var(--color-secondary-light)' : 'var(--color-text-primary)' }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: '700', color: methodeTirage === m.id ? 'var(--color-secondary-light)' : 'var(--color-text-primary)' }}>
                       {m.label}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{m.desc}</div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>{m.desc}</div>
                   </div>
-                  {methodeTirage === m.id && <Shuffle size={16} color="var(--color-secondary-light)" />}
+                  {methodeTirage === m.id && <Shuffle size={14} color="var(--color-secondary-light)" />}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Pénalités de retard */}
-          <div className="form-group" style={{ background: 'var(--color-bg-surface)', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-light)' }}>
-            <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '700' }}>
+          <div className="form-group" style={{ background: 'var(--color-bg-surface)', padding: '0.65rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-light)' }}>
+            <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '700' }}>
               <span>Pénalités en cas de retard</span>
               <input type="checkbox" checked={penaliteRetardActif} onChange={(e) => setPenaliteRetardActif(e.target.checked)} />
             </label>
 
             {penaliteRetardActif && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginTop: '0.75rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.45rem', marginTop: '0.65rem' }}>
                 <div>
-                  <label className="form-label" style={{ fontSize: '0.75rem' }}>FCFA / jour de retard</label>
+                  <label className="form-label" style={{ fontSize: '0.7rem' }}>FCFA / jour</label>
                   <input type="number" className="input-field" value={montantPenaliteParJour} onChange={(e) => setMontantPenaliteParJour(e.target.value)} min="100" />
                 </div>
                 <div>
-                  <label className="form-label" style={{ fontSize: '0.75rem' }}>Délai de grâce (jours)</label>
+                  <label className="form-label" style={{ fontSize: '0.7rem' }}>Grâce (jours)</label>
                   <input type="number" className="input-field" value={delaiGraceJours} onChange={(e) => setDelaiGraceJours(e.target.value)} min="0" />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Cagnotte */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', background: 'var(--color-bg-surface)', border: '1px solid var(--color-border-light)', borderRadius: 'var(--radius-lg)', padding: '0.85rem', margin: '1rem 0' }}>
-            <Wallet size={24} color="var(--color-secondary-light)" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'var(--color-bg-surface)', border: '1px solid var(--color-border-light)', borderRadius: 'var(--radius-lg)', padding: '0.75rem', margin: '0.85rem 0' }}>
+            <Wallet size={20} color="var(--color-secondary-light)" />
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Cagnotte brute estimée par tour :</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--color-secondary-light)' }}>
+              <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>Cagnotte brute estimée :</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--color-secondary-light)' }}>
                 {cagnotteEstimee.toLocaleString('fr-FR')} FCFA
               </div>
             </div>
           </div>
 
           <button type="submit" disabled={loading} className="btn-primary btn-full">
-            {loading ? 'Création en cours...' : 'Lancer le cercle de tontine'}
+            {loading ? 'Création...' : 'Lancer le cercle de tontine'}
           </button>
         </form>
       </div>

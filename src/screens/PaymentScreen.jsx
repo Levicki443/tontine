@@ -1,8 +1,7 @@
 /**
  * ÉCRAN : VERSEMENT DE COTISATION & PREUVE (PaymentScreen.jsx)
  * 
- * Supporte Orange Money, Wave, MTN MoMo, Moov Money, l'upload de reçus,
- * le calcul des pénalités et la mise en file d'attente hors-ligne.
+ * Interface 100% responsive avec opérateurs Wave, Orange, MTN, Moov et upload de reçus.
  */
 
 import React, { useState } from 'react';
@@ -50,7 +49,7 @@ export const PaymentScreen = ({ tontine, onNavigate, onPaymentCompleted }) => {
 
     const parsedMontant = Number(montant);
     if (!parsedMontant || parsedMontant <= 0) {
-      setErrorMsg('Veuillez spécifier un montant valide pour votre cotisation.');
+      setErrorMsg('Veuillez spécifier un montant valide.');
       return;
     }
 
@@ -63,7 +62,6 @@ export const PaymentScreen = ({ tontine, onNavigate, onPaymentCompleted }) => {
       numeroTour: tontine?.tourActuel || 1
     };
 
-    // Mode hors-ligne : stockage local sécurisé
     if (!isOnline()) {
       const offlineItem = enqueueOfflineAction('payment', paymentPayload);
       setTransactionRef(offlineItem.id);
@@ -95,26 +93,25 @@ export const PaymentScreen = ({ tontine, onNavigate, onPaymentCompleted }) => {
 
   return (
     <div className="page-wrapper page-wrapper-narrow">
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div style={{ marginBottom: '1.25rem' }}>
         <BoutonRetour onPress={() => onNavigate('dashboard')} label="Retour au tableau de bord" />
       </div>
 
       <div className="glass-card">
-        <div style={{ width: '56px', height: '56px', borderRadius: 'var(--radius-full)', background: 'var(--color-secondary-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem auto' }}>
-          <Wallet size={28} color="var(--color-secondary-light)" />
+        <div style={{ width: '50px', height: '50px', borderRadius: 'var(--radius-full)', background: 'var(--color-secondary-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
+          <Wallet size={24} color="var(--color-secondary-light)" />
         </div>
 
-        <h1 style={{ fontSize: '1.4rem', fontWeight: '800', textAlign: 'center', marginBottom: '0.3rem' }}>
+        <h1 style={{ fontSize: '1.3rem', fontWeight: '800', textAlign: 'center', marginBottom: '0.25rem' }}>
           Effectuer une Cotisation
         </h1>
-        <p style={{ textAlign: 'center', fontSize: '0.85rem', marginBottom: '1.5rem', color: 'var(--color-text-secondary)' }}>
+        <p style={{ textAlign: 'center', fontSize: '0.8rem', marginBottom: '1.25rem', color: 'var(--color-text-secondary)' }}>
           {tontine ? `Cercle : ${tontine.titre} (Tour #${tontine.tourActuel || 1})` : 'Paiement sécurisé'}
         </p>
 
-        {errorMsg && <div className="banner-error"><AlertCircle size={18} /><span>{errorMsg}</span></div>}
+        {errorMsg && <div className="banner-error"><AlertCircle size={16} /><span>{errorMsg}</span></div>}
 
         <form onSubmit={handlePay}>
-          {/* Montant */}
           <div className="form-group">
             <label className="form-label">Montant à verser (FCFA)</label>
             <div className="input-field-wrapper">
@@ -122,10 +119,9 @@ export const PaymentScreen = ({ tontine, onNavigate, onPaymentCompleted }) => {
             </div>
           </div>
 
-          {/* Opérateurs Mobile Money */}
           <div className="form-group">
-            <label className="form-label">Opérateur Mobile Money / Paiement</label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
+            <label className="form-label">Moyen de paiement</label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.45rem' }}>
               {OPERATEURS.map((op) => {
                 const Icon = op.icon;
                 const isSelected = selectedOperateur === op.id;
@@ -138,18 +134,18 @@ export const PaymentScreen = ({ tontine, onNavigate, onPaymentCompleted }) => {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '0.4rem',
-                      padding: '0.65rem 0.5rem',
+                      gap: '0.35rem',
+                      padding: '0.55rem 0.4rem',
                       borderRadius: 'var(--radius-md)',
                       background: isSelected ? 'var(--color-primary-subtle)' : 'var(--color-bg-input)',
                       border: `1px solid ${isSelected ? 'var(--color-primary-light)' : 'var(--color-border-light)'}`,
                       color: isSelected ? 'var(--color-text-accent)' : 'var(--color-text-secondary)',
                       fontWeight: isSelected ? '700' : '500',
-                      fontSize: '0.8rem',
+                      fontSize: '0.78rem',
                       cursor: 'pointer'
                     }}
                   >
-                    <Icon size={16} />
+                    <Icon size={14} />
                     <span>{op.label}</span>
                   </button>
                 );
@@ -157,7 +153,6 @@ export const PaymentScreen = ({ tontine, onNavigate, onPaymentCompleted }) => {
             </div>
           </div>
 
-          {/* Numéro */}
           {selectedOperateur !== 'Carte Bancaire' && (
             <div className="form-group">
               <label className="form-label">Numéro Mobile Money débité</label>
@@ -167,7 +162,6 @@ export const PaymentScreen = ({ tontine, onNavigate, onPaymentCompleted }) => {
             </div>
           )}
 
-          {/* Upload de Preuve / Reçu */}
           <div className="form-group">
             <label className="form-label">Preuve de paiement / Reçu (optionnel)</label>
             <label
@@ -176,8 +170,8 @@ export const PaymentScreen = ({ tontine, onNavigate, onPaymentCompleted }) => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '0.35rem',
-                padding: '1rem',
+                gap: '0.3rem',
+                padding: '0.85rem',
                 border: '1px dashed var(--color-border-medium)',
                 borderRadius: 'var(--radius-md)',
                 background: 'var(--color-bg-surface)',
@@ -186,15 +180,15 @@ export const PaymentScreen = ({ tontine, onNavigate, onPaymentCompleted }) => {
             >
               <input type="file" accept="image/*,.pdf" onChange={handleFileUpload} style={{ display: 'none' }} />
               {fileName ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-status-success)', fontSize: '0.85rem' }}>
-                  <FileCheck size={18} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-status-success)', fontSize: '0.8rem' }}>
+                  <FileCheck size={16} />
                   <span>{fileName}</span>
                 </div>
               ) : (
                 <>
-                  <UploadCloud size={22} color="var(--color-text-muted)" />
-                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                    Cliquez pour joindre une capture ou reçu
+                  <UploadCloud size={20} color="var(--color-text-muted)" />
+                  <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+                    Joindre une capture ou reçu
                   </span>
                 </>
               )}
@@ -202,29 +196,28 @@ export const PaymentScreen = ({ tontine, onNavigate, onPaymentCompleted }) => {
           </div>
 
           <button type="submit" disabled={loading} className="btn-secondary btn-full" style={{ marginTop: '0.5rem' }}>
-            {loading ? 'Validation en cours...' : `Confirmer le versement (${Number(montant || 0).toLocaleString('fr-FR')} FCFA)`}
+            {loading ? 'Validation...' : `Confirmer (${Number(montant || 0).toLocaleString('fr-FR')} FCFA)`}
           </button>
         </form>
       </div>
 
-      {/* Modale Succès */}
       {successModal && (
         <div className="modal-overlay">
           <div className="modal-dialog" style={{ textAlign: 'center' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: 'var(--radius-full)', background: 'var(--color-status-success-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
-              <CheckCircle size={32} color="var(--color-status-success)" />
+            <div style={{ width: '56px', height: '56px', borderRadius: 'var(--radius-full)', background: 'var(--color-status-success-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem auto' }}>
+              <CheckCircle size={28} color="var(--color-status-success)" />
             </div>
 
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: '0.25rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: '800', marginBottom: '0.2rem' }}>
               {isOfflineSaved ? 'Enregistré Hors-Ligne !' : 'Cotisation Validée !'}
             </h3>
-            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: '1.25rem' }}>
-              {isOfflineSaved ? 'Votre versement sera synchronisé dès le retour du réseau internet.' : 'Votre cotisation a été enregistrée avec succès.'}
+            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
+              {isOfflineSaved ? 'Votre versement sera synchronisé dès le retour d\'internet.' : 'Votre cotisation a été enregistrée avec succès.'}
             </p>
 
-            <div style={{ background: 'var(--color-bg-surface)', border: '1px solid var(--color-border-light)', borderRadius: 'var(--radius-md)', padding: '0.875rem', marginBottom: '1.5rem' }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '0.25rem' }}>Référence :</div>
-              <div style={{ fontSize: '1rem', fontWeight: '800', color: 'var(--color-secondary-light)' }}>{transactionRef}</div>
+            <div style={{ background: 'var(--color-bg-surface)', border: '1px solid var(--color-border-light)', borderRadius: 'var(--radius-md)', padding: '0.75rem', marginBottom: '1.25rem' }}>
+              <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginBottom: '0.2rem' }}>Référence :</div>
+              <div style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--color-secondary-light)' }}>{transactionRef}</div>
             </div>
 
             <button type="button" onClick={() => { setSuccessModal(false); if (onPaymentCompleted) onPaymentCompleted(); onNavigate('dashboard'); }} className="btn-primary btn-full">
