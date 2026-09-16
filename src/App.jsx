@@ -1,7 +1,8 @@
 /**
  * POINT D'ENTRÉE & ROUTEUR PRINCIPAL PWA (App.jsx)
  * 
- * Orchestration globale de la navigation, du mode hors-ligne et des flux de l'application.
+ * Orchestration globale de la navigation, de l'arrière-plan 3D interactif
+ * et du mode hors-ligne.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -12,6 +13,7 @@ import DashboardScreen from './screens/DashboardScreen';
 import CreateTontineScreen from './screens/CreateTontineScreen';
 import PaymentScreen from './screens/PaymentScreen';
 import NetworkStatusBanner from './components/NetworkStatusBanner';
+import Background3D from './components/Background3D';
 import { setAuthToken, getAuthToken, apiService } from './services/api';
 
 export default function App() {
@@ -32,7 +34,6 @@ export default function App() {
             setCurrentScreen('dashboard');
           }
         } catch {
-          // Jeton expiré ou serveur hors-ligne
           if (!localStorage.getItem('tontine_auth_token')) {
             setAuthToken(null);
           }
@@ -76,7 +77,10 @@ export default function App() {
   }
 
   return (
-    <div className="app-container">
+    <div className="app-container" style={{ position: 'relative', zIndex: 1 }}>
+      {/* Moteur d'Animation 3D en arrière-plan */}
+      <Background3D />
+
       {/* Bannière de connectivité et synchronisation PWA */}
       <NetworkStatusBanner />
 

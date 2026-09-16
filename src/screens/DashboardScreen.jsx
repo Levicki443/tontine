@@ -2,15 +2,16 @@
  * TABLEAU DE BORD PRINCIPAL & TRANSPARENCE FINANCIÈRE (DashboardScreen.jsx)
  * 
  * Centralise les cercles d'épargne, les notifications réelles, les cycles,
- * l'espace litiges et la gestion de sécurité 2FA.
+ * l'espace litiges, les paramètres utilisateur et la sécurité 2FA.
  */
 
 import React, { useState, useEffect } from 'react';
-import { Users, Wallet, Bell, History, LogOut, Plus, CreditCard, Calendar, ShieldCheck, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { Users, Wallet, Bell, History, LogOut, Plus, CreditCard, Calendar, ShieldCheck, ShieldAlert, CheckCircle2, Settings } from 'lucide-react';
 import NotificationCard from '../components/NotificationCard';
 import CycleCalendarModal from '../components/CycleCalendarModal';
 import DisputeModal from '../components/DisputeModal';
 import TwoFactorModal from '../components/TwoFactorModal';
+import SettingsModal from '../components/SettingsModal';
 import LanguageSelector from '../components/LanguageSelector';
 import { tontineApiService } from '../services/tontineApi';
 import { useTranslation } from '../constants/i18n';
@@ -34,6 +35,7 @@ export const DashboardScreen = ({ user, onNavigate, onSelectTontineForPayment, o
   const [calendarTontineId, setCalendarTontineId] = useState(null);
   const [disputeTontineId, setDisputeTontineId] = useState(null);
   const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(user);
 
   const loadData = async () => {
@@ -86,6 +88,15 @@ export const DashboardScreen = ({ user, onNavigate, onSelectTontineForPayment, o
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <LanguageSelector />
+          <button
+            type="button"
+            onClick={() => setShowSettingsModal(true)}
+            className="btn-outline"
+            style={{ padding: '0.4rem 0.65rem', fontSize: '0.8rem' }}
+            title="Paramètres du compte"
+          >
+            <Settings size={16} color="var(--color-secondary-light)" />
+          </button>
           <button
             type="button"
             onClick={() => setShowSecurityModal(true)}
@@ -299,6 +310,13 @@ export const DashboardScreen = ({ user, onNavigate, onSelectTontineForPayment, o
         <TwoFactorModal
           user={currentUser}
           onClose={() => setShowSecurityModal(false)}
+          onUserUpdated={(u) => setCurrentUser(u)}
+        />
+      )}
+      {showSettingsModal && (
+        <SettingsModal
+          user={currentUser}
+          onClose={() => setShowSettingsModal(false)}
           onUserUpdated={(u) => setCurrentUser(u)}
         />
       )}

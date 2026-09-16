@@ -1,8 +1,8 @@
 /**
  * SERVICE API HTTP CENTRALISÉ (api.js)
  * 
- * Gère les communications réseau avec le backend Express, l'injection du token JWT,
- * et les flux d'authentification 2FA.
+ * Gère les communications réseau, l'injection du token JWT,
+ * le 2FA, la modification de profil et le changement de mot de passe.
  */
 
 const rawBaseUrl = (import.meta.env.VITE_API_URL || import.meta.env.VITE_URL || 'http://localhost:5000').trim().replace(/\/+$/, '');
@@ -24,7 +24,7 @@ export const setAuthToken = (token) => {
 export const getAuthToken = () => userToken;
 
 /**
- * Fonction générique d'exécution des requêtes HTTP avec gestion d'erreurs.
+ * Fonction générique d'exécution des requêtes HTTP.
  */
 export const request = async (endpoint, options = {}) => {
   const headers = {
@@ -42,13 +42,12 @@ export const request = async (endpoint, options = {}) => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || 'Une erreur est survenue lors de la communication avec le serveur.');
+      throw new Error(data.message || 'Une erreur est survenue lors de la communication.');
     }
 
     return data;
   } catch (error) {
     if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      console.warn(`[Mode Hors-Ligne Détecté] Échec de communication vers ${API_BASE_URL}${endpoint}`);
       throw new Error('Connexion réseau indisponible. L\'action sera stockée localement.');
     }
     throw error;
@@ -59,46 +58,31 @@ export const apiService = {
   getAuthToken,
   setAuthToken,
 
-  register: (userData) => {
-    return request('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(userData)
-    });
-  },
+  register: (userData) =>
+    request('/auth/register', { method: 'POST', body: JSON.stringify(userData) }),
 
-  login: (identifiant, password) => {
-    return request('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ identifiant, password })
-    });
-  },
+  login: (identifiant, password) =>
+    request('/auth/login', { method: 'POST', body: JSON.stringify({ identifiant, password }) }),
 
-  verify2FA: (userId, code) => {
-    return request('/auth/verify-2fa', {
-      method: 'POST',
-      body: JSON.stringify({ userId, code })
-    });
-  },
+  verify2FA: (userId, code) =>
+    request('/auth/verify-2fa', { method: 'POST', body: JSON.stringify({ userId, code }) }),
 
-  toggle2FA: (actif) => {
-    return request('/auth/toggle-2fa', {
+  updateProfile: (profileData) =>
+    request('/auth/me', { method: 'PATCH', body: JSON.stringify(profileData) }),
+
+  updatePassword: (currentPassword, newPassword, confirmNewPassword) =>
+    request('/auth/me/mot-de-passe', {
       method: 'PATCH',
-      body: JSON.stringify({ actif })
-    });
-  },
+      body: JSON.stringify({ currentPassword, newPassword, confirmNewPassword })
+    }),
 
-  getProfile: () => {
-    return request('/auth/me', {
-      method: 'GET'
-    });
-  },
+  toggle2FA: (actif) =>
+    request('/auth/toggle-2fa', { method: 'PATCH', body: JSON.stringify({ actif }) }),
 
-  refreshToken: (refreshToken) => {
-    return request('/auth/refresh-token', {
-      method: 'POST',
-      body: JSON.stringify({ refreshToken })
-    });
-  }
+  getProfile: () => request('/auth/me', { method: 'GET' }),
+
+  refreshToken: (refreshToken) =>
+    request('/auth/refresh-token', { method: 'POST', body: JSON.stringify({ refreshToken }) })
 };
 
 export default apiService;
